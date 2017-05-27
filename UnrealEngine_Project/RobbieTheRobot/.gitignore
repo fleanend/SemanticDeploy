@@ -66,8 +66,3 @@ DerivedDataCache/*
 *.swp
 *.swo
 .ctrlp_cache/
-
-bin/*
-obj/*
-NodeJS_Server/node_modules/
-Properties/*

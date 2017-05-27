@@ -1,1 +1,0 @@
-D:\Progetti\SemanticDeploy\SpeechRecognitionOffline\bin\Debug\SpeechRecognition.exe.config

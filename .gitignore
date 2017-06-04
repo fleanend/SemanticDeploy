@@ -2,3 +2,4 @@ bin/
 obj/
 *.dat
 .vs/
+TTs/TTs.VC.db

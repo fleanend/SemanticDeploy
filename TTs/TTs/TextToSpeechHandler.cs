@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.Speech.Synthesis;
+using Microsoft.Speech.AudioFormat;
 
 namespace TTS
 {
@@ -12,15 +10,16 @@ namespace TTS
     public class TextToSpeechHandler
     {
 
-        public static String TextToSpeech(String text, int voiceIndex = 0, bool voiceIntroduce = false)
+        public static MemoryStream TextToSpeech(String text, int voiceIndex = 0, bool voiceIntroduce = false)
         {
             // Initialize a new instance of the SpeechSynthesizer.
 
             SpeechSynthesizer synth = new SpeechSynthesizer();
 
-            synth.SetOutputToWaveFile("msg.wav");
 
-            
+            MemoryStream streamAudio = new MemoryStream();
+
+            synth.SetOutputToAudioStream(streamAudio, new SpeechAudioFormatInfo(EncodingFormat.Pcm, 44100, 16, 1, 16000, 2, null));
 
             ArrayList voices = new ArrayList();
 
@@ -46,73 +45,19 @@ namespace TTS
             }
 
             synth.Speak(msg);
+            synth.SetOutputToNull();
             synth.Dispose();
-
-            return Path.GetFullPath("msg.wav");
+            return streamAudio;
         }
 
-        public static String TextToSpeech(String text, int voiceIndex = 0)
+        public static MemoryStream TextToSpeech(String text, int voiceIndex = 0)
         {
-            // Initialize a new instance of the SpeechSynthesizer.
-
-            SpeechSynthesizer synth = new SpeechSynthesizer();
-
-            synth.SetOutputToWaveFile("msg.wav");
-
-
-
-            ArrayList voices = new ArrayList();
-
-            foreach (InstalledVoice voice in synth.GetInstalledVoices())
-            {
-                VoiceInfo info = voice.VoiceInfo;
-
-                voices.Add(info.Name);
-            }
-
-            if (voiceIndex > synth.GetInstalledVoices().Count)
-            {
-                voiceIndex = synth.GetInstalledVoices().Count;
-            }
-
-            synth.SelectVoice(voices[voiceIndex].ToString());
-
-            String msg = text;
-
-            synth.Speak(msg);
-            synth.Dispose();
-
-            return Path.GetFullPath("msg.wav");
+            return TextToSpeech(text, voiceIndex, false);
         }
 
-        public static String TextToSpeech(String text)
+        public static MemoryStream TextToSpeech(String text)
         {
-            // Initialize a new instance of the SpeechSynthesizer.
-
-            SpeechSynthesizer synth = new SpeechSynthesizer();
-
-            synth.SetOutputToWaveFile("msg.wav");
-
-
-
-            ArrayList voices = new ArrayList();
-
-            foreach (InstalledVoice voice in synth.GetInstalledVoices())
-            {
-                VoiceInfo info = voice.VoiceInfo;
-
-                voices.Add(info.Name);
-            }
-
-
-            synth.SelectVoice(voices[0].ToString());
-
-            String msg = text;
-
-            synth.Speak(msg);
-            synth.Dispose();
-
-            return Path.GetFullPath("msg.wav");
+            return TextToSpeech(text, 0, false);
         }
     }
 }

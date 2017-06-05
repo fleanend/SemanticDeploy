@@ -12,6 +12,9 @@ namespace Progetto2 {
 	using namespace System::Data;
 	using namespace System::Drawing;
 	using namespace TTS;
+	using namespace System::IO;
+	using namespace System::Text;
+
 
 	/// <summary>
 	/// Riepilogo per MyForm
@@ -103,18 +106,19 @@ namespace Progetto2 {
 		}
 
 	private: System::Void button1_Click(System::Object^  sender, System::EventArgs^  e) {
-		System::String^ wavFile = TextToSpeechHandler::TextToSpeech(this->textBox1->Text);
 
-		std::string wavFileN = msclr::interop::marshal_as< std::string >(wavFile);
+		MemoryStream^ memStream = gcnew MemoryStream(1000);
+		memStream = TextToSpeechHandler::TextToSpeech(this->textBox1->Text);
+		memStream->Position = 0;
+		FileStream ^fs = File::OpenWrite("file.txt");
+		memStream->WriteTo(fs);
+
+		memStream->Close();
+		fs->Close();
+
+		//this->label1->Text = wavfile;
+
 		
-		std::wstring stemp = std::wstring(wavFileN.begin(), wavFileN.end());
-		LPCWSTR sysWavFile = stemp.c_str();
-
-		this->label1->Text = wavFile;
-
-		PlaySound(sysWavFile, NULL, SND_FILENAME);
-
-		DeleteFile(sysWavFile);
 
 	}
 

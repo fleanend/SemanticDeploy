@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TTS", "TTs\TTS.csproj", "{2
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Progetto2", "Progetto2\Progetto2.vcxproj", "{15A2622B-BF93-43F4-B209-2F9C44350D40}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TTSWrapper", "ClassLibrary1\ClassLibrary1.vcxproj", "{927F89EE-E83C-46C0-8EB0-98C65E11368F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -47,6 +49,18 @@ Global
 		{15A2622B-BF93-43F4-B209-2F9C44350D40}.Release|x64.Build.0 = Release|x64
 		{15A2622B-BF93-43F4-B209-2F9C44350D40}.Release|x86.ActiveCfg = Release|Win32
 		{15A2622B-BF93-43F4-B209-2F9C44350D40}.Release|x86.Build.0 = Release|Win32
+		{927F89EE-E83C-46C0-8EB0-98C65E11368F}.Debug|Any CPU.ActiveCfg = Debug|Win32
+		{927F89EE-E83C-46C0-8EB0-98C65E11368F}.Debug|ARM.ActiveCfg = Debug|Win32
+		{927F89EE-E83C-46C0-8EB0-98C65E11368F}.Debug|x64.ActiveCfg = Debug|x64
+		{927F89EE-E83C-46C0-8EB0-98C65E11368F}.Debug|x64.Build.0 = Debug|x64
+		{927F89EE-E83C-46C0-8EB0-98C65E11368F}.Debug|x86.ActiveCfg = Debug|Win32
+		{927F89EE-E83C-46C0-8EB0-98C65E11368F}.Debug|x86.Build.0 = Debug|Win32
+		{927F89EE-E83C-46C0-8EB0-98C65E11368F}.Release|Any CPU.ActiveCfg = Release|Win32
+		{927F89EE-E83C-46C0-8EB0-98C65E11368F}.Release|ARM.ActiveCfg = Release|Win32
+		{927F89EE-E83C-46C0-8EB0-98C65E11368F}.Release|x64.ActiveCfg = Release|x64
+		{927F89EE-E83C-46C0-8EB0-98C65E11368F}.Release|x64.Build.0 = Release|x64
+		{927F89EE-E83C-46C0-8EB0-98C65E11368F}.Release|x86.ActiveCfg = Release|Win32
+		{927F89EE-E83C-46C0-8EB0-98C65E11368F}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

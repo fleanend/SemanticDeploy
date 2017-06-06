@@ -2,6 +2,7 @@
 #include <windows.h>
 #include <mmsystem.h>
 #include <msclr/marshal_cppstd.h>
+#define AUDIOBYTES 40000
 
 namespace Progetto2 {
 
@@ -11,7 +12,6 @@ namespace Progetto2 {
 	using namespace System::Windows::Forms;
 	using namespace System::Data;
 	using namespace System::Drawing;
-	using namespace TTS;
 	using namespace System::IO;
 	using namespace System::Text;
 
@@ -107,7 +107,7 @@ namespace Progetto2 {
 
 	private: System::Void button1_Click(System::Object^  sender, System::EventArgs^  e) {
 
-		MemoryStream^ memStream = gcnew MemoryStream(1000);
+		/*MemoryStream^ memStream = gcnew MemoryStream(1000);
 		memStream = TextToSpeechHandler::TextToSpeech(this->textBox1->Text);
 		memStream->Position = 0;
 		FileStream ^fs = File::OpenWrite("file.txt");
@@ -115,11 +115,35 @@ namespace Progetto2 {
 
 		memStream->Close();
 		fs->Close();
-
-		//this->label1->Text = wavfile;
-
+		*/
 		
 
+		int size = this->textBox1->Text->Length;
+
+		interior_ptr<const Char> ppchar = PtrToStringChars(this->textBox1->Text);
+
+		Char* str = (Char*)malloc(sizeof(Char)*size);
+
+		unsigned char* audio = (unsigned char*)malloc(size*AUDIOBYTES);
+
+		for (int i = 0; i < size; i++)
+			str[i] = *(ppchar + i);
+
+		int audiolength = TTSWrap::TTSWrap::TextToPCM(str,&audio[0],size);
+
+		FileStream ^fs = File::OpenWrite("file.txt");
+		
+		int count = 0;
+
+		while (count < audiolength)
+		{
+			fs->WriteByte(audio[count++]);
+		}
+
+		fs->Close();
+
+		free(str);
+		free(audio);
 	}
 
 	}

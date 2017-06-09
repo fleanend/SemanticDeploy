@@ -1,13 +1,10 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "MicrosoftSpeechTTS.h"
+#include "MicrosoftSpeechTTSBPLibrary.h"
 #include "MSSoundWave.h"
 #include "Audio.h"
 //#include "AudioDevice.h"
-
-using namespace System;
-using namespace System::IO;
-using namespace TTS;
 
 
 UMSSoundWave::UMSSoundWave(const FObjectInitializer& ObjectInitializer): Super(ObjectInitializer)
@@ -20,14 +17,13 @@ UMSSoundWave::UMSSoundWave(const FObjectInitializer& ObjectInitializer): Super(O
 	bProcedural = true;
 	SampleCursor = 0;
 	BytesRead = 0;
-	//GenerationNumber = 0;
+	GenerationNumber = 0;
 }
 
 bool UMSSoundWave::Initialize(FString Text = L"Welcome to Five Minutes Rage")
 {
-	wchar_t* e = &Text.GetCharArray()[0];
-	//memStream = TextToSpeechHandler::TextToSpeech(&Text.GetCharArray()[0]);
-	//AudioBuffer = memStream->GetBuffer();
+
+	AudioBuffer = UMicrosoftSpeechTTSBPLibrary::TextToPCM(&Text.GetCharArray()[0], &BytesRead);
 	return true;
 }
 
@@ -44,21 +40,21 @@ int32 UMSSoundWave::GeneratePCMData(uint8* PCMData, const int32 SamplesNeeded)
 		}
 
 		// First buffers are wrong, go further only after some iterations
-		//if (GenerationNumber > 5) {
+		if (GenerationNumber > 5) {
 
 			// Place 16bit of data in two uint8
 		PCMData[2 * i] = AudioBuffer[2 * SampleCursor];
 		PCMData[2 * i + 1] = AudioBuffer[2 * SampleCursor + 1];
 		SampleCursor++;
-		/*}
+		}
 		else {
 			// Place silence instead of audio, do not increase SampleCursor
 			PCMData[2 * i] = 0;
 			PCMData[2 * i + 1] = 0;
 		}
 	}
-	GenerationNumber++;*/
-	}
+	GenerationNumber++;
+	
 	return SamplesNeeded * sizeof(int16);
 }
 

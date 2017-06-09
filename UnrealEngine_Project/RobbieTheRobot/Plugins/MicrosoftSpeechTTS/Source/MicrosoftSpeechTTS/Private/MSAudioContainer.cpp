@@ -3,6 +3,7 @@
 #include "MicrosoftSpeechTTS.h"
 #include "MSAudioContainer.h"
 
+
 UMSAudioContainer::UMSAudioContainer(const FObjectInitializer& ObjectInitializer): Super(ObjectInitializer)
 {
 
@@ -20,9 +21,9 @@ UMSAudioContainer* UMSAudioContainer::Initialize(FString Text)
 	return this;
 }
 
-void UMSAudioContainer::Play()
+void UMSAudioContainer::Play(float startTime)
 {
-	TTSAudioComponent->Play();
+	TTSAudioComponent->Play(startTime);
 }
 
 UMSAudioContainer::~UMSAudioContainer()

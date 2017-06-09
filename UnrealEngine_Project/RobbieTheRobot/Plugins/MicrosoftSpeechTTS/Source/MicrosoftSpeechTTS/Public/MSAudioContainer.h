@@ -27,7 +27,7 @@ class MICROSOFTSPEECHTTS_API UMSAudioContainer : public UAudioComponent
 		 * Calls play() on the contained TTSAudioComponent
 		 */
 		UFUNCTION(BlueprintCallable, meta = (DisplayName = "Play TTS", Keywords = "MicrosoftSpeechTTS TTS Text-to-Speech Audio Speech"), Category="Text To Speech")
-		void Play();
+		void Play(float startTime);
 
 		~UMSAudioContainer();
 	private:

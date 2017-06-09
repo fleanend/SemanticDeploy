@@ -2,6 +2,7 @@
 
 #pragma once
 
+
 #include "Engine.h"
 #include "MSAudioContainer.h"
 #include "MicrosoftSpeechTTSBPLibrary.generated.h"
@@ -29,6 +30,15 @@ class UMicrosoftSpeechTTSBPLibrary : public UBlueprintFunctionLibrary
 {
 	GENERATED_UCLASS_BODY()
 
-		UFUNCTION(BlueprintCallable, meta = (DisplayName = "Spawn TTS", Keywords = "MicrosoftSpeechTTS TTS Text-to-Speech Audio Speech"), Category = "Audio")
-		static UMSAudioContainer* Speak(FString Text);
+	UFUNCTION(BlueprintCallable, meta = (DisplayName = "Spawn TTS", Keywords = "MicrosoftSpeechTTS TTS Text-to-Speech Audio Speech"), Category = "Audio")
+	static UMSAudioContainer* Speak(FString Text);
+
+	static char* TextToPCM(wchar_t* textToRender, ULONG* bytesRead);
+
+
+	private:
+
+	static void testHr(HRESULT hr);
+
+
 };

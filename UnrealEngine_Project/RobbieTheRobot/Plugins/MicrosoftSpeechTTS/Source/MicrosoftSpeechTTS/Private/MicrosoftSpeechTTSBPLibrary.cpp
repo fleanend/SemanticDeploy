@@ -10,10 +10,10 @@ UMicrosoftSpeechTTSBPLibrary::UMicrosoftSpeechTTSBPLibrary(const FObjectInitiali
 
 }
 
- UMSAudioContainer* UMicrosoftSpeechTTSBPLibrary::Speak(FString Text)
+ UMSSoundWave* UMicrosoftSpeechTTSBPLibrary::Speak(FString Text)
 {
-	UMSAudioContainer* TTSAC = NewObject<UMSAudioContainer>();
-	TTSAC->Initialize(Text);
-	return TTSAC;
+	UMSSoundWave* soundWave = NewObject<UMSSoundWave>();
+	soundWave->Initialize(Text);
+	return soundWave;
 
 }

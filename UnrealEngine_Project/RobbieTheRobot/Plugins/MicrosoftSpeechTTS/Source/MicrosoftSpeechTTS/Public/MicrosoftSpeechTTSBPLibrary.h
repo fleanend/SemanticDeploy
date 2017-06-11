@@ -31,6 +31,6 @@ class UMicrosoftSpeechTTSBPLibrary : public UBlueprintFunctionLibrary
 	GENERATED_UCLASS_BODY()
 
 	UFUNCTION(BlueprintCallable, meta = (DisplayName = "Spawn TTS", Keywords = "MicrosoftSpeechTTS TTS Text-to-Speech Audio Speech"), Category = "Audio")
-	static UMSAudioContainer* Speak(FString Text);
+	static UMSSoundWave* Speak(FString Text);
 
 };

@@ -4,7 +4,7 @@
 	"VersionName": "1.0",
 	"FriendlyName": "MicrosoftSpeechTTS",
 	"Description": "",
-	"Category": "Other",
+	"Category": "Audio",
 	"CreatedBy": "",
 	"CreatedByURL": "",
 	"DocsURL": "",
@@ -17,7 +17,7 @@
 		{
 			"Name": "MicrosoftSpeechTTS",
 			"Type": "Runtime",
-			"LoadingPhase": "PreLoadingScreen"
+			"LoadingPhase": "PreDefault"
 		}
 	]
 }

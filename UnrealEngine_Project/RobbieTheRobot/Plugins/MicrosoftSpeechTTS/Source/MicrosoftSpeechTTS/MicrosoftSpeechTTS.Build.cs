@@ -6,6 +6,16 @@ using System.IO;
 
 public class MicrosoftSpeechTTS : ModuleRules
 {
+	private string ModulePath
+	{
+		get { return ModuleDirectory; }
+	}
+
+	private string MSLIBPath
+	{
+		get { return Path.GetFullPath(Path.Combine(ModulePath, "../MSLIB/")); }
+	}
+
 	public MicrosoftSpeechTTS(TargetInfo Target)
 	{
 		
@@ -21,7 +31,7 @@ public class MicrosoftSpeechTTS : ModuleRules
 		PrivateIncludePaths.AddRange(
 			new string[] {
 				"MicrosoftSpeechTTS/Private",
-				"dlls",
+				"MSLIB",
 				
 				// ... add other private include paths required here ...
 			}
@@ -32,6 +42,11 @@ public class MicrosoftSpeechTTS : ModuleRules
 			new string[]
 			{
 				"Core",
+				"CoreUObject",
+				"Engine",
+				"InputCore",
+				"Media"
+
 				
 				// ... add other public dependencies that you statically link with here ...
 			}
@@ -58,20 +73,30 @@ public class MicrosoftSpeechTTS : ModuleRules
 			}
 			);
 
-		
+		LoadMSLIB(Target);
+
+	}
+
+	public bool LoadMSLIB( TargetInfo Target ) {
+		bool isLibrarySupported = false;
+		string filename = "";
 		if((Target.Platform == UnrealTargetPlatform.Win64) || (Target.Platform == UnrealTargetPlatform.Win32)) {
+			isLibrarySupported = true;
+			if(Target.Platform == UnrealTargetPlatform.Win64) {
+				filename = "MSLIB-x64.lib";
+			} else if(Target.Platform == UnrealTargetPlatform.Win32) {
+				filename = "MSLIB-x86.lib";
+			}
 
-			string filename = "sapi.lib";
-			// path to directory where this .Build.cs is located
-			string BaseDir = ModuleDirectory;
-			PublicLibraryPaths.Add(Path.Combine(BaseDir, "../dlls"));
-			PrivateIncludePaths.Add("dlls/sapi.h");
-			PrivateIncludePaths.Add("dlls/sapiddk.h");
-			PrivateIncludePaths.Add("dlls/sperror.h");
-			PrivateIncludePaths.Add("dlls/sphelper.h");
-			Definitions.Add(string.Format("WITH_SAPI={0}", 1));
-		
+			if(filename != "") {
+				// path to directory where this .Build.cs is located
+				PublicLibraryPaths.Add(MSLIBPath);
+				PublicAdditionalLibraries.Add(Path.Combine(MSLIBPath, filename));
+				PublicIncludePaths.Add(Path.Combine(MSLIBPath, "TextToSpeech.h"));
+				Console.WriteLine("Additional Include dir is: " + Path.Combine(MSLIBPath, "TextToSpeech.h"));
+				Definitions.Add(string.Format("WITH_MSLIB={0}", isLibrarySupported ? 1 : 0));
+			}
 		}
-
+		return isLibrarySupported;
 	}
 }

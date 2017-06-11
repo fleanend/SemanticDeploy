@@ -3,6 +3,7 @@
 #include "MicrosoftSpeechTTS.h"
 #include "MicrosoftSpeechTTSBPLibrary.h"
 #include "MSSoundWave.h"
+#include "TextToSpeech.h"
 #include "Audio.h"
 //#include "AudioDevice.h"
 
@@ -23,7 +24,7 @@ UMSSoundWave::UMSSoundWave(const FObjectInitializer& ObjectInitializer): Super(O
 bool UMSSoundWave::Initialize(FString Text = L"Welcome to Five Minutes Rage")
 {
 
-	AudioBuffer = UMicrosoftSpeechTTSBPLibrary::TextToPCM(&Text.GetCharArray()[0], &BytesRead);
+	AudioBuffer = TextToSpeech::TextToSpeech::TextToPCM(&Text.GetCharArray()[0], &BytesRead);
 	return true;
 }
 

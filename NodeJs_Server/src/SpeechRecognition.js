@@ -17,9 +17,6 @@ let speechToTextConfiguration = {
 
 let SpeechRecognition = function () {
     let that = this;
-
-    // EDIT: speechs counter
-    let speech = 0;
     
     let speechStream = new EventEmitter();
 
@@ -195,11 +192,14 @@ let SpeechRecognition = function () {
         speechRecPromise.then(emitSpeechSignal(firstAlternative)).catch(emitErrorSignal());
         */
 
+        let counter = 0;
+
         // Starting a timer: at the end of each interval controls if we have an answer by Watson, otherways gives an error message
         var timerRec = setInterval(function () {
             counter += 1;
             //console.log('iteration num ' + counter);
             if (firstAlternative != null) {
+                console.log('speech recognized');
                 emitSpeechSignal(firstAlternative);
                 clearInterval(timerRec);
             }
@@ -233,9 +233,6 @@ let SpeechRecognition = function () {
                 resetMicrophoneBuffer();
                 return;
             }
-
-            console.log('result received');
-
             //speechStream.emit('recognized', firstAlternative);
         });
     }

@@ -5,6 +5,13 @@ const ConversationModule = require('watson-developer-cloud/conversation/v1');
 const SpeechRecognition = require('./src/SpeechRecognition');
 const util = require('util');
 
+// Regressor fn params
+const C_ANG = 0.05454;
+const C = 2.336;
+// Lag time
+const OFFSET = 1;
+const ERROR_COMP = 1;
+
 // Dialog learning states.
 const DIALOG = {
     LEARN: {
@@ -39,6 +46,8 @@ botClient.connect(9001, '127.0.0.1', () => console.log('Bot TCP client connected
 // Used to check if there is a pending request to dialog system.
 let waitingDialog = false;
 
+let speaking = false;
+
 // Starts speech recognition.
 var sr = new SpeechRecognition();
 sr.start();
@@ -48,6 +57,14 @@ sr.getSpeechStream().on('recognized', (text) => {
         dialog(text);
     }
 });
+
+// EDIT: action on speech notRecognized
+sr.getSpeechStream().on('notRecognized', (text) => {
+    speechClient.write(text);
+    if (!waitingDialog) {
+        dialog(text);
+    }
+})
 
 // Keep the dialog states.
 let context = {};
@@ -61,6 +78,11 @@ let intent = {
     examples: [],
 };
 let confirmedExample = null;
+
+function speechTimeFromString(speechText) {
+    let vowelCounter = speechText.match(/[aeiouyw]/gi);
+    return (OFFSET + (C_ANG * vowelCounter + C) + ERROR_COMP);
+}
 
 function dialog(speech) {
     waitingDialog = true;
@@ -91,6 +113,15 @@ function dialog(speech) {
 
         // The chatbot text response.
         if (serviceResponse.output.text[0]) {
+            /*
+            if (!speaking) {
+                speaking = true;
+                outputText = serviceResponse.output.text[0];
+                let timerSpeaking = setTimeout(function () {
+                    speaking = false;
+                }, speechTimeFromString(outputText));
+            }
+            */
             outputText = serviceResponse.output.text[0];
         }
 

@@ -5,6 +5,10 @@ const execSync = require('child_process').execSync;
 const EventEmitter = require('events');
 const SpeechToTextV1 = require('watson-developer-cloud/speech-to-text/v1');
 
+// Watson call timeout (in ms)
+const TIMEOUT = 8000;
+const N_INTERVALS = 4;
+
 let speechToTextConfiguration = {
     "url": "https://stream.watsonplatform.net/speech-to-text/api",
     "username": "21d51917-0097-4356-8a58-331d4c9ac558",
@@ -13,6 +17,9 @@ let speechToTextConfiguration = {
 
 let SpeechRecognition = function () {
     let that = this;
+
+    // EDIT: speechs counter
+    let speech = 0;
     
     let speechStream = new EventEmitter();
 
@@ -82,11 +89,11 @@ let SpeechRecognition = function () {
     }
 
     function onMicrophoneData(data) {
+        // speech recognised offline
         microphoneBuffer = appendBuffer(microphoneBuffer, data);
     }
 
     function onMicrophoneSilence(data) {
-
         let stream = fs.createWriteStream('audio.raw');
 
         if (offlineRecognitionSucceded) {
@@ -126,15 +133,122 @@ let SpeechRecognition = function () {
         let params = {
             audio: fs.createReadStream(fileNameConverted),
             content_type: 'audio/ogg;codecs=opus',
-            timestamps: false,
+            timestamps: false, // se desse veramente timestamp non sarebbe male ma non si capisce come li ritorni
             continuous: false,
             word_alternatives_threshold: 0.9,
         };
 
         sending = true;
-        SpeechToTextService.recognize(params, onSpeechToTextServiceResponse);
+
+        var firstTranscriptionResult = null;
+        var firstAlternative = null;
+
+        /*
+        var recognitionTimer = setTimeout(function () {
+            emitSpeechSignal(firstAlternative);
+        }, TIMEOUT);
+        */
+
+        /*
+        var speechRecPromise = new Promise(function (emitSpeechSignal, emitErrorSignal) {
+
+            console.log('Timer Started...');
+            var timerExpired = false;
+            var speechRecTimer = setTimeout(function () {
+                console.log('Timer Expired');
+                timerExpired = true;
+                emitErrorSignal();
+            }, TIMEOUT);
+
+            // EDIT: generic function in place of onSpeechToTextServiceResponse()
+            SpeechToTextService.recognize(params, function (error, response) {
+                // Sending finished.
+                sending = false;
+
+                if (error) {
+                    console.log('Error from SpeechToTextService: ', error);
+                    return;
+                }
+
+                if (!response || !response.results || !response.results.length) {
+                    clearTimeout(speechRecTimer);
+                    return;
+                }
+
+                firstTranscriptionResult = response.results[0];
+                firstAlternative = firstTranscriptionResult.alternatives[0].transcript;
+                console.log(firstAlternative);
+
+                if (offlineRecognitionSucceded) {
+                    resetMicrophoneBuffer();
+                    return;
+                }
+
+                if (!timerExpired) {
+                    emitSpeechSignal(firstAlternative);
+                }
+
+                //speechStream.emit('recognized', firstAlternative);
+            });
+        });
+
+        speechRecPromise.then(emitSpeechSignal(firstAlternative)).catch(emitErrorSignal());
+        */
+
+        // Starting a timer: at the end of each interval controls if we have an answer by Watson, otherways gives an error message
+        var timerRec = setInterval(function () {
+            counter += 1;
+            //console.log('iteration num ' + counter);
+            if (firstAlternative != null) {
+                emitSpeechSignal(firstAlternative);
+                clearInterval(timerRec);
+            }
+            else if (counter == N_INTERVALS) {
+                clearInterval(timerRec);
+                console.log('recognization timeout');
+                emitErrorSignal();
+            }
+        }, TIMEOUT / N_INTERVALS);
+
+        // EDIT: generic function in place of onSpeechToTextServiceResponse()
+        SpeechToTextService.recognize(params, function (error, response) {
+            // Sending finished.
+            sending = false;
+
+            if (error) {
+                console.log('Error from SpeechToTextService: ', error);
+                return;
+            }
+
+            if (!response || !response.results || !response.results.length) {
+                clearInterval(timerRec);
+                return;
+            }
+
+            firstTranscriptionResult = response.results[0];
+            firstAlternative = firstTranscriptionResult.alternatives[0].transcript;
+            console.log(firstAlternative);
+
+            if (offlineRecognitionSucceded) {
+                resetMicrophoneBuffer();
+                return;
+            }
+
+            console.log('result received');
+
+            //speechStream.emit('recognized', firstAlternative);
+        });
     }
 
+    function emitSpeechSignal(evaluatedText) {
+        speechStream.emit('recognized', evaluatedText);       
+    }
+
+    function emitErrorSignal() {
+        speechStream.emit('notRecognized', 'error404');
+    }
+    
+    /*
     function onSpeechToTextServiceResponse(error, response) {
         // Sending finished.
         sending = false;
@@ -158,6 +272,7 @@ let SpeechRecognition = function () {
 
         speechStream.emit('recognized', firstAlternative);
     }
+    */
 
     // Listen for new data from SpeechRecognition process.
     function onSpeechRecognized(binaryText) {

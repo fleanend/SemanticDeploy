@@ -25,6 +25,11 @@ bool UMSSoundWave::Initialize(FString Text = L"Welcome to Five Minutes Rage")
 {
 
 	AudioBuffer = TextToSpeech::TextToSpeech::TextToPCM(&Text.GetCharArray()[0], &BytesRead);
+
+	while (AudioBuffer[BytesRead] == 0)
+	{
+		BytesRead--;
+	}
 	return true;
 }
 

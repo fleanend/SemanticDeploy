@@ -6,6 +6,8 @@ Intermediate/
 TTs/TTs.VC.db
 Release/
 Debug/
+Binaries/
+ipch/
 UnrealEngine_Project/RobbieTheRobot/Plugins/MicrosoftSpeechTTS/Binaries/Win64/UE4Editor.modules
 UnrealEngine_Project/RobbieTheRobot/Plugins/MicrosoftSpeechTTS/Binaries/Win64/UE4Editor-MicrosoftSpeechTTS.pdb
 NodeJs_Server/npm-debug.log

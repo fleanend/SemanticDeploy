@@ -1,36 +1,52 @@
 ﻿using System;
-using System.Speech.Recognition;
 using System.IO;
+using Microsoft.Speech.Recognition;
+using Choices = Microsoft.Speech.Recognition.Choices;
+using Grammar = Microsoft.Speech.Recognition.Grammar;
+using GrammarBuilder = Microsoft.Speech.Recognition.GrammarBuilder;
+using RecognizeMode = Microsoft.Speech.Recognition.RecognizeMode;
+using SpeechRecognitionEngine = Microsoft.Speech.Recognition.SpeechRecognitionEngine;
+using SpeechRecognitionRejectedEventArgs = Microsoft.Speech.Recognition.SpeechRecognitionRejectedEventArgs;
+using SpeechRecognizedEventArgs = Microsoft.Speech.Recognition.SpeechRecognizedEventArgs;
 
 namespace SpeechRecognition
 {
     class Program
     {
+        private static SpeechRecognitionEngine _recognizer;
         static void Main(string[] args)
         {
-            string keyphrasesFile = "keyphrases.txt";
+            var keyphrasesFile = "keyphrases.txt";
             if(args.Length != 0)
             {
                 keyphrasesFile = args[0];
             }
 
-            using (SpeechRecognitionEngine recognizer = new SpeechRecognitionEngine(new System.Globalization.CultureInfo("en-US")))
-            {
-                Choices choices = new Choices();
-                choices.Add(getChoices(keyphrasesFile));
+            RecognizerInfo info = null;
+            foreach(var ri in SpeechRecognitionEngine.InstalledRecognizers()) {
+                if(ri.Culture.TwoLetterISOLanguageName.Equals("en")) {
+                    info = ri;
+                    break;
+                }
+            }
+            if(info == null) return;
 
-                GrammarBuilder gb = new GrammarBuilder();
-                gb.Append(choices);
+            using (_recognizer = new SpeechRecognitionEngine(info))
+            {
+                var keyphrases = new Choices(getChoices(keyphrasesFile));
+
+
+                var gb = new GrammarBuilder(keyphrases) {Culture = info.Culture};
 
                 // Create the Grammar instance.
-                Grammar g = new Grammar(gb);
-
-                DictationGrammar dg = new DictationGrammar();
-                recognizer.LoadGrammar(g);
-                recognizer.SpeechRecognized += new EventHandler<SpeechRecognizedEventArgs>(recognizer_SpeechRecognized);
-                recognizer.SpeechRecognitionRejected += new EventHandler<SpeechRecognitionRejectedEventArgs>(recognizer_SpeechNotRecognized);
-                recognizer.SetInputToDefaultAudioDevice();
-                recognizer.RecognizeAsync(RecognizeMode.Multiple);
+                var g = new Grammar(gb) {Name = "Keyphrases"};
+                
+                _recognizer.RequestRecognizerUpdate();
+                _recognizer.LoadGrammar(g);
+                _recognizer.SpeechRecognized += recognizer_SpeechRecognized;
+                _recognizer.SpeechRecognitionRejected += recognizer_SpeechNotRecognized;
+                _recognizer.SetInputToDefaultAudioDevice();
+                _recognizer.RecognizeAsync(RecognizeMode.Multiple);
                 while (true)
                 {
                     Console.ReadLine();

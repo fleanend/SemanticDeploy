@@ -49,13 +49,13 @@ let waitingDialog = false;
 let speaking = false;
 
 // Starts speech recognition.
-var sr = new SpeechRecognition();
+var sr = new SpeechRecognition(botClient);
 sr.start();
 sr.getSpeechStream().on('recognized', (text) => {
     speechClient.write(text);
     if (!waitingDialog) {
         dialog(text);
-    }
+	}
 });
 
 // EDIT: action on speech notRecognized

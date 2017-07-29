@@ -15,10 +15,11 @@ let speechToTextConfiguration = {
     "password": "xLB54SZKHpVl"
 };
 
-let SpeechRecognition = function () {
+let SpeechRecognition = function (_botClient) {
     let that = this;
     
     let speechStream = new EventEmitter();
+	let botClient = _botClient;
 
     // Offline speech recognition.
     let offlineRecognitionSucceded = true;
@@ -197,6 +198,7 @@ let SpeechRecognition = function () {
         // Starting a timer: at the end of each interval controls if we have an answer by Watson, otherways gives an error message
         var timerRec = setInterval(function () {
             counter += 1;
+			onWaitingReply("Uhm...");
             //console.log('iteration num ' + counter);
             if (firstAlternative != null) {
                 console.log('speech recognized');
@@ -270,6 +272,10 @@ let SpeechRecognition = function () {
         speechStream.emit('recognized', firstAlternative);
     }
     */
+	
+	function onWaitingReply(text) {
+		botClient.write(text);
+	}
 
     // Listen for new data from SpeechRecognition process.
     function onSpeechRecognized(binaryText) {

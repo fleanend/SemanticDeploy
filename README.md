@@ -3,6 +3,7 @@
 
 ## Index
 - [Requirements](#Requirements)
+- [MSLIB](#MSLIB)
 - [Speech Recognition Offline](#SpeechRecognitionOffline)
 - [Unreal Engine](#UnrealEngine)
 - [Node.js Server](#NodeJSServer)
@@ -15,6 +16,16 @@
 - [Sox](https://sourceforge.net/projects/sox/)
 - [Unreal Engine 4](https://www.unrealengine.com/download)
 
+### Other Dependencies
+- [MFC and ATL Libraries](https://msdn.microsoft.com/it-it/library/hh967573.aspx), downloadable from VS installer, as dependencies for MSLIB
+- Microsoft Speech Runtime & Languages
+	- [Microsoft Speech Platform 11 SDK](http://go.microsoft.com/fwlink/?LinkID=223570&clcid=0x409)
+	- [Microsoft Speech Platform 11 Runtime](https://www.microsoft.com/en-us/download/details.aspx?id=27225)
+	- [Microsoft Speech Platform 11 Runtime Languages](https://www.microsoft.com/en-us/download/details.aspx?id=27224):
+		- **MSSpeech_TTS_en-US_ZiraPro**, as output voice
+		- **MSSpeech_SR_en-US_TELE**, for the Speech Recognition
+	You can download more languages, but you have to update accordingly MSLIB source
+	
 ### Suggestions
 
 After tools installation, check if **sox** and **node** work in command prompt; if not, you have to add their locations to PATH environment variable.
@@ -30,6 +41,24 @@ sox:      SoX v14.4.2
 > node -v
 v6.9.1
 ```
+
+## Usage
+
+1. Compile the SpeechRecognition project, then copy ``SpeechRecognition.exe`` and ``keyphrases.txt`` inside the NodeJSServer folder
+2. Make sure Unreal Engine is building the project correctly
+3. Start the game (from the UE Editor or launch the game binary) 
+4. Start the nodejs server
+
+
+## <a name="MSLIB"></a> MSLIB
+
+### Description
+
+MSLIB, which stands for Microsoft Speech Lib, is a simple static library which exposes the method ``TextToPCM``. This method takes a String as an input and returns a byte array containing the TTS render of said String.
+MSLIB uses [Microsoft Speech API (SAPI) 5.4](https://msdn.microsoft.com/en-us/library/ee125663(v=vs.85).aspx).
+
+**NOTE:** Make sure that the MSLIB project is pointing to your MicrosoftSpeech SDK install location (specifically, the Include and Lib folders), default for this project are ``D:\Program Files\Microsoft SDKs\Speech\v11.0\`` (x64 build) and ``D:\Program Files %28x86%29\Microsoft SDKs\Speech\v11.0`` (x86 build).
+**NOTE:** If you change/update the library, recompiling, make sure to place the new version of the lib files and headers inside ``UnrealEngine_Project\RobbieTheRobot\Plugins\MicrosoftSpeechTTS\Source\MSLIB``
 
 ## <a name="SpeechRecognitionOffline"></a> Speech Recognition Offline
 
@@ -66,6 +95,13 @@ It contains the third person preset and a TCP C++ class exposed to Blueprint: it
 
 ThirdPersonCharacter Blueprint is used to setup the TCP server and you can find documentation in it.
 
+### MicrosoftSpeechTTS
+
+MicrosoftSpeechTTS is an Unreal Engine plugin which exposes a Blueprint Node called **Spawn TTS**. This node takes a **Text** as input and outputs a **SoundWave**, as simple as that.
+To play the output an AudioComponent is needed. Here's how the **Spawn TTS** node is used in this project:
+
+![blueprint](blueprint.png)
+
 
 ### Usage
 You can launch the game with right click on RobbieTheRobot.uproject and click _Launch game_ or double-click to open the project.
@@ -82,7 +118,7 @@ This project needs the Unreal Engine game launched to run.
 ### Install
 Run the following command to install the project dependencies.
 ```bat
-node install
+npm install
 ```
 
 ### Usage
@@ -105,7 +141,10 @@ You can change service credentials opening `index.js` (_Watson Conversation_) an
 `keyphrases.txt` contains all phrases that have to be recognized offline: if you notice that some phrases are missing you can add them into this file.
 
 ## Author
-Daniel Bertocci
+Daniel Bertocci (original author)
+Federico D'Ambrosio
+Enrico Ferro
+Edoardo Ferrante
 
 ### Contacts
 

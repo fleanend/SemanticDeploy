@@ -42,14 +42,6 @@ sox:      SoX v14.4.2
 v6.9.1
 ```
 
-## Usage
-
-1. Compile the SpeechRecognition project, then copy ``SpeechRecognition.exe`` and ``keyphrases.txt`` inside the NodeJSServer folder
-2. Make sure Unreal Engine is building the project correctly
-3. Start the game (from the UE Editor or launch the game binary) 
-4. Start the nodejs server
-
-
 ## <a name="MSLIB"></a> MSLIB
 
 ### Description
@@ -58,6 +50,7 @@ MSLIB, which stands for Microsoft Speech Lib, is a simple static library which e
 MSLIB uses [Microsoft Speech API (SAPI) 5.4](https://msdn.microsoft.com/en-us/library/ee125663(v=vs.85).aspx).
 
 **NOTE:** Make sure that the MSLIB project is pointing to your MicrosoftSpeech SDK install location (specifically, the Include and Lib folders), default for this project are ``D:\Program Files\Microsoft SDKs\Speech\v11.0\`` (x64 build) and ``D:\Program Files %28x86%29\Microsoft SDKs\Speech\v11.0`` (x86 build).
+
 **NOTE:** If you change/update the library, recompiling, make sure to place the new version of the lib files and headers inside ``UnrealEngine_Project\RobbieTheRobot\Plugins\MicrosoftSpeechTTS\Source\MSLIB``
 
 ## <a name="SpeechRecognitionOffline"></a> Speech Recognition Offline
@@ -127,6 +120,14 @@ Run the following command to execute the project.
 ```bat
 node index.js
 ```
+
+## Usage summary
+
+1. Compile the SpeechRecognition project, then copy ``SpeechRecognition.exe`` and ``keyphrases.txt`` inside the NodeJSServer folder
+2. Make sure Unreal Engine is building the project correctly
+3. Start the game (from the UE Editor or launch the game binary) 
+4. Start the nodejs server
+
 
 
 ### Details
